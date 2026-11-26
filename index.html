@@ -1,0 +1,461 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SIGAE WEB | Atendimento de Emergência</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <header class="topo">
+        <div class="marca">
+            <div class="marca-icone">+</div>
+            <div>
+                <h1>SIGAE WEB</h1>
+                <p>Gerenciamento de Atendimentos de Emergência</p>
+            </div>
+        </div>
+
+        <div class="status-sistema">
+            <span class="status-ponto"></span>
+            Sistema operacional
+        </div>
+    </header>
+
+    <div class="estrutura">
+
+        <aside class="menu">
+            <p class="menu-titulo">MENU PRINCIPAL</p>
+
+            <button class="menu-item ativo" data-view="dashboard">Visão geral</button>
+            <button class="menu-item" data-view="pacientes">Pacientes</button>
+            <button class="menu-item" data-view="medicos">Médicos</button>
+            <button class="menu-item" data-view="fila">Fila de prioridade</button>
+            <button class="menu-item" data-view="historico">Histórico</button>
+
+            <!-- Identificação acadêmica do projeto -->
+            <div class="menu-rodape">
+                <strong>SIGAE WEB</strong>
+                <span>Projeto acadêmico</span>
+                <span>Universidade de Vassouras</span>
+                <span>Campus Maricá</span>
+            </div>
+        </aside>
+
+        <main class="conteudo">
+
+            <!-- =================================================
+                 TELA 1: DASHBOARD
+                 Apresenta os indicadores e um resumo da operação.
+            ================================================== -->
+            <section class="tela ativa" id="view-dashboard">
+
+                <div class="titulo-pagina">
+                    <div>
+                        <span class="sobretitulo">CENTRAL DE OPERAÇÕES</span>
+                        <h2>Painel de atendimento</h2>
+                        <p>Acompanhamento geral da unidade de emergência.</p>
+                    </div>
+                    <span class="data-atual" id="dataAtual"></span>
+                </div>
+
+                <div class="indicadores">
+
+                    <article class="indicador azul">
+                        <span>Pacientes aguardando</span>
+                        <strong id="totalAguardando">0</strong>
+                        <small>Na fila de prioridade</small>
+                    </article>
+
+                    <article class="indicador laranja">
+                        <span>Em atendimento</span>
+                        <strong id="totalAtendimento">0</strong>
+                        <small>Consultas em andamento</small>
+                    </article>
+
+                    <article class="indicador verde">
+                        <span>Concluídos</span>
+                        <strong id="totalConcluidos">0</strong>
+                        <small>Atendimentos finalizados</small>
+                    </article>
+
+                    <article class="indicador roxo">
+                        <span>Médicos disponíveis</span>
+                        <strong id="totalMedicosDisponiveis">0</strong>
+                        <small>Prontos para atendimento</small>
+                    </article>
+
+                    <article class="indicador laranja">
+                        <span>Médicos ocupados</span>
+                        <strong id="totalMedicosOcupados">0</strong>
+                        <small>Em atendimento</small>
+                    </article>
+
+                </div>
+
+                <div class="colunas">
+
+                    <article class="painel">
+                        <div class="painel-cabecalho">
+                            <div>
+                                <h3>Próximos pacientes</h3>
+                                <p>Ordem definida pela prioridade clínica.</p>
+                            </div>
+                            <button class="botao-secundario" data-go="fila">Ver fila</button>
+                        </div>
+
+                        <div id="resumoFila" class="lista-simples">
+                            <p class="vazio">Nenhum paciente aguardando.</p>
+                        </div>
+                    </article>
+
+                    <article class="painel">
+                        <div class="painel-cabecalho">
+                            <div>
+                                <h3>Equipe médica</h3>
+                                <p>Disponibilidade dos profissionais.</p>
+                            </div>
+                            <button class="botao-secundario" data-go="medicos">Ver médicos</button>
+                        </div>
+
+                        <div id="resumoMedicos" class="lista-simples">
+                            <p class="vazio">Nenhum médico cadastrado.</p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Atendimentos recentes</h3>
+                            <p>Últimas movimentações registradas.</p>
+                        </div>
+                        <button class="botao-secundario" data-go="historico">Ver histórico</button>
+                    </div>
+
+                    <div id="resumoHistorico" class="lista-simples">
+                        <p class="vazio">Nenhuma movimentação registrada.</p>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- =================================================
+                 TELA 2: PACIENTES
+                 Permite cadastrar, localizar e reclassificar pacientes.
+            ================================================== -->
+            <section class="tela" id="view-pacientes">
+
+                <div class="titulo-pagina">
+                    <div>
+                        <span class="sobretitulo">CADASTRO E CONSULTA</span>
+                        <h2>Pacientes</h2>
+                        <p>Registre pacientes e consulte suas informações.</p>
+                    </div>
+                </div>
+
+                <!-- Cadastro: o sistema gera o identificador e a chegada -->
+                <article class="painel">
+                    <h3>Cadastrar paciente</h3>
+                    <p class="texto-apoio">
+                    </p>
+
+                    <form id="formPaciente" class="formulario">
+
+                        <div class="campo">
+                            <label for="nomePaciente">Nome completo</label>
+                            <input id="nomePaciente" type="text" maxlength="100"
+                                placeholder="Digite o nome do paciente" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="riscoPaciente">Classificação de risco</label>
+                            <select id="riscoPaciente" required>
+                                <option value="">Selecione o risco</option>
+                                <option value="1">1 - Emergência</option>
+                                <option value="2">2 - Muito urgente</option>
+                                <option value="3">3 - Urgente</option>
+                                <option value="4">4 - Pouco urgente</option>
+                                <option value="5">5 - Não urgente</option>
+                            </select>
+                        </div>
+
+                        <button class="botao-principal" type="submit">
+                            Cadastrar paciente
+                        </button>
+                    </form>
+                </article>
+
+                <article class="painel">
+                    <h3>Consultar paciente pelo código</h3>
+                    <p class="texto-apoio">
+                        Localize o cadastro diretamente pela Tabela Hash.
+                    </p>
+
+                    <form id="formConsultaPaciente" class="formulario">
+                        <div class="campo">
+                            <label for="consultaPacienteId">Código do paciente</label>
+                            <input id="consultaPacienteId" type="number" min="1"
+                                placeholder="Ex.: 1" required>
+                        </div>
+
+                        <button class="botao-principal" type="submit">
+                            Consultar paciente
+                        </button>
+                    </form>
+
+                    <div id="resultadoConsultaPaciente" class="resultado-consulta">
+                        <p class="vazio">Nenhuma consulta realizada.</p>
+                    </div>
+                </article>
+
+                <article class="painel">
+                    <h3>Reclassificar paciente</h3>
+                    <p class="texto-apoio">
+                    </p>
+
+                    <form id="formReclassificarPaciente" class="formulario">
+                        <div class="campo">
+                            <label for="idPacienteReclassificar">Código do paciente</label>
+                            <input id="idPacienteReclassificar" type="number" min="1"
+                                placeholder="Ex.: 1" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="novoRiscoPaciente">Nova classificação</label>
+                            <select id="novoRiscoPaciente" required>
+                                <option value="">Selecione o novo risco</option>
+                                <option value="1">1 - Emergência</option>
+                                <option value="2">2 - Muito urgente</option>
+                                <option value="3">3 - Urgente</option>
+                                <option value="4">4 - Pouco urgente</option>
+                                <option value="5">5 - Não urgente</option>
+                            </select>
+                        </div>
+
+                        <button class="botao-principal" type="submit">
+                            Atualizar classificação
+                        </button>
+                    </form>
+                </article>
+
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Pacientes registrados</h3>
+                            <p>Consulte a situação atual de cada paciente.</p>
+                        </div>
+
+                        <input class="busca" id="buscaPaciente" type="search"
+                            placeholder="Buscar por nome ou código">
+                    </div>
+
+                    <div id="listaPacientes" class="tabela-responsiva"></div>
+                </article>
+
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Pacientes por ordem de chegada</h3>
+                            <p>Do primeiro ao último paciente registrado.</p>
+                        </div>
+                    </div>
+
+                    <div id="listaPacientesChegada" class="tabela-responsiva"></div>
+                </article>
+
+            </section>
+
+            <!-- =================================================
+                 TELA 3: MÉDICOS
+                 Cadastro e acompanhamento da disponibilidade profissional.
+            ================================================== -->
+            <section class="tela" id="view-medicos">
+
+                <div class="titulo-pagina">
+                    <div>
+                        <span class="sobretitulo">EQUIPE DE ATENDIMENTO</span>
+                        <h2>Médicos</h2>
+                        <p>Cadastre profissionais e controle sua situação operacional.</p>
+                    </div>
+                </div>
+
+                <article class="painel">
+                    <h3>Cadastrar médico</h3>
+                    <p class="texto-apoio">
+                        O código interno será gerado automaticamente.
+                        Informe um registro profissional fictício.
+                    </p>
+
+                    <form id="formMedico" class="formulario">
+
+                        <div class="campo">
+                            <label for="nomeMedico">Nome do médico</label>
+                            <input id="nomeMedico" type="text" maxlength="100"
+                                placeholder="Digite o nome do profissional" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="especialidadeMedico">Especialidade</label>
+                            <input id="especialidadeMedico" type="text" maxlength="80"
+                                placeholder="Ex.: Clínica geral" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="registroProfissionalMedico">Registro profissional fictício</label>
+                            <input id="registroProfissionalMedico" type="text" maxlength="30"
+                                placeholder="Ex.: CRM-FIC-001" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="statusMedicoCadastro">Situação operacional inicial</label>
+                            <select id="statusMedicoCadastro" required>
+                                <option value="disponivel">Disponível</option>
+                                <option value="indisponivel">Indisponível</option>
+                            </select>
+                        </div>
+
+                        <button class="botao-principal" type="submit">
+                            Cadastrar médico
+                        </button>
+                    </form>
+                </article>
+
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Equipe cadastrada</h3>
+                            <p>Registros, disponibilidade e consultas concluídas.</p>
+                        </div>
+                    </div>
+
+                    <div id="listaMedicos" class="tabela-responsiva"></div>
+                </article>
+
+            </section>
+
+            <!-- =================================================
+                 TELA 4: FILA DE PRIORIDADE
+                 Gerencia chamadas e atendimentos simultâneos.
+            ================================================== -->
+            <section class="tela" id="view-fila">
+
+                <div class="titulo-pagina">
+                    <div>
+                        <span class="sobretitulo">ORGANIZAÇÃO POR GRAVIDADE</span>
+                        <h2>Fila de prioridade</h2>
+                        <p>Pacientes organizados conforme as regras de classificação.</p>
+                    </div>
+                </div>
+
+                <article class="painel destaque-fila">
+                    <div>
+                        <h3>Chamada do próximo paciente</h3>
+                        <p>
+                            O sistema seleciona o paciente prioritário
+                            e um médico disponível.
+                        </p>
+                    </div>
+
+                    <button class="botao-principal" id="btnChamarProximo">
+                        Chamar próximo paciente
+                    </button>
+                </article>
+
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Pacientes aguardando</h3>
+                            <p>Emergência tem prioridade sobre os demais níveis.</p>
+                        </div>
+
+                        <span class="contador" id="contadorFila">0 pacientes</span>
+                    </div>
+
+                    <div id="listaFila" class="tabela-responsiva"></div>
+                </article>
+
+                <article class="painel">
+                    <h3>Chamados e atendimentos em andamento</h3>
+                    <p class="texto-apoio">
+                        Gerencie o início, a conclusão, o cancelamento ou o desfazimento da chamada.
+                    </p>
+
+                    <div id="listaEmAtendimento" class="tabela-responsiva"></div>
+                </article>
+
+            </section>
+
+            <!-- =================================================
+                 TELA 5: HISTÓRICO
+                 Apresenta consultas finalizadas e movimentações.
+            ================================================== -->
+            <section class="tela" id="view-historico">
+
+                <div class="titulo-pagina">
+                    <div>
+                        <span class="sobretitulo">REGISTROS DO SISTEMA</span>
+                        <h2>Histórico</h2>
+                        <p>Consulte movimentações e atendimentos realizados.</p>
+                    </div>
+                </div>
+
+                <!-- Relação dos atendimentos que foram concluídos -->
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Consultas concluídas</h3>
+                            <p>Atendimentos finalizados e seus respectivos médicos.</p>
+                        </div>
+                    </div>
+
+                    <div id="listaConcluidos" class="tabela-responsiva"></div>
+                </article>
+
+                <!-- Indicador de produtividade da equipe médica -->
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Consultas concluídas por médico</h3>
+                            <p>Quantidade de atendimentos finalizados por profissional.</p>
+                        </div>
+                    </div>
+
+                    <div id="resumoConsultasMedicos" class="tabela-responsiva"></div>
+                </article>
+
+                <article class="painel">
+                    <div class="painel-cabecalho">
+                        <div>
+                            <h3>Pesquisar registros</h3>
+                            <p>Pesquise por código, paciente, médico ou movimentação.</p>
+                        </div>
+
+                        <input class="busca" id="buscaHistorico" type="search"
+                            placeholder="Digite para pesquisar">
+                    </div>
+
+                    <div id="listaHistorico" class="tabela-responsiva"></div>
+                </article>
+
+            </section>
+
+            <!-- RODAPÉ: identificação acadêmica -->
+            <footer class="rodape">
+                SIGAE WEB · Projeto acadêmico de Engenharia de Software · Universidade de Vassouras
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Notificações dinâmicas de sucesso, erro e confirmação -->
+    <div id="notificacao" class="notificacao" role="status"></div>
+
+</body>
+</html>
